@@ -1,0 +1,8 @@
+<nav class="app-nav">
+  <a routerLink="/users" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Utilisateurs</a>
+  <a routerLink="/guides" routerLinkActive="active">Guides</a>
+  <a routerLink="/coachmarks" routerLinkActive="active">Scores</a>
+</nav>
+<main class="app-shell">
+  <router-outlet></router-outlet>
+</main>

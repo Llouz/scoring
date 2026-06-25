@@ -1,0 +1,166 @@
+<section class="page-section">
+  <div class="section-header">
+    <h1>Scores</h1>
+  </div>
+
+  <div class="panel">
+    <div class="panel-heading">
+      <h2>Créer / mettre à jour un score</h2>
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label>Nom utilisateur</label>
+        <input
+          [(ngModel)]="associate.user.nom"
+          (ngModelChange)="updateUserSuggestionList('associate')"
+          placeholder="Nom"
+        />
+
+        <div *ngIf="associateUserSuggestions.length" class="suggestion-list">
+          <button
+            type="button"
+            class="suggestion-item"
+            *ngFor="let user of associateUserSuggestions"
+            (click)="selectSuggestedUser(user, 'associate')">
+            {{ user.nom }} {{ user.prenom }}
+          </button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Prénom utilisateur</label>
+        <input
+          [(ngModel)]="associate.user.prenom"
+          (ngModelChange)="updateUserSuggestionList('associate')"
+          placeholder="Prénom"
+        />
+      </div>
+
+      <div class="field">
+        <label>Nom guide</label>
+        <input
+          [(ngModel)]="associate.guide.nom"
+          (ngModelChange)="updateGuideSuggestionList('associate')"
+          placeholder="Guide"
+        />
+
+        <div *ngIf="associateGuideSuggestions.length" class="suggestion-list">
+          <button
+            type="button"
+            class="suggestion-item"
+            *ngFor="let guide of associateGuideSuggestions"
+            (click)="selectSuggestedGuide(guide, 'associate')">
+            {{ guide.nom }}
+          </button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Score initial</label>
+        <input
+          type="number"
+          [(ngModel)]="associate.score"
+        />
+      </div>
+
+      <div class="field actions">
+
+        <button
+          type="button"
+          (click)="associateUser()">
+          Enregistrer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-heading">
+      <h2>Recherche de scores</h2>
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label>Nom utilisateur</label>
+        <input
+          [(ngModel)]="searchNom"
+          (ngModelChange)="updateUserSuggestionList('search')"
+          placeholder="Nom"
+        />
+
+        <div *ngIf="searchUserSuggestions.length" class="suggestion-list">
+          <button
+            type="button"
+            class="suggestion-item"
+            *ngFor="let user of searchUserSuggestions"
+            (click)="selectSuggestedUser(user, 'search')">
+            {{ user.nom }} {{ user.prenom }}
+          </button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Prénom</label>
+        <input
+          [(ngModel)]="searchPrenom"
+          (ngModelChange)="updateUserSuggestionList('search')"
+          placeholder="Prénom"
+        />
+      </div>
+
+      <div class="field actions">    
+        <button
+          type="button"
+          class="secondary"
+          (click)="findScores()">
+          Afficher les scores
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="message" class="message">
+    {{ message }}
+  </div>
+
+  <div class="list-header">
+    <h2>Liste des scores</h2>
+
+    <button
+      type="button"
+      class="toggle-btn"
+      (click)="showScores = !showScores">
+
+      {{ showScores ? 'Masquer la liste' : 'Afficher la liste' }}
+    </button>
+  </div>
+
+  <div class="table-wrapper" *ngIf="showScores">
+
+    <table *ngIf="userScores.length">
+      <thead>
+        <tr>
+          <th>Nom utilisateur</th>
+          <th>Prénom</th>
+          <th>Guide</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let score of userScores" class="table-row">
+          <td>{{ score.user.nom }}</td>
+          <td>{{ score.user.prenom }}</td>
+          <td>{{ score.guide.nom }}</td>
+          <td>{{ score.score }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p *ngIf="!userScores.length">
+      Aucun score affiché.
+    </p>
+
+  </div>
+</section>

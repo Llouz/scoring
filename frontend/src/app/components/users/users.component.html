@@ -1,0 +1,76 @@
+<section class="page-section">
+  <div class="section-header">
+    <h1>Utilisateurs</h1>
+  </div>
+
+  <div class="panel">
+    <br>
+    <div class="form-grid two-cols">
+      <div class="field">
+        <label>Nom</label>
+        <input [(ngModel)]="form.nom" placeholder="Nom" />
+      </div>
+      <div class="field">
+        <label>Prénom</label>
+        <input [(ngModel)]="form.prenom" placeholder="Prénom" />
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="button" class="secondary" (click)="createUser()">Créer l utilisateur</button>
+    </div>
+  </div>
+
+  <div class="actions-row">
+    <button type="button" class="secondary" (click)="loadUsers()">Rafraîchir la liste complète</button>
+  </div>
+
+  <div *ngIf="message" class="message">{{ message }}</div>
+
+  <div class="panel">
+
+    <div class="table-wrapper">
+      <p-table
+        [value]="users"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [tableStyle]="{ 'min-width': '100%' }"
+        styleClass="p-datatable-sm p-datatable-striped">
+        <ng-template pTemplate="header">
+          <tr>
+            <th *ngFor="let col of cols">{{ col.header }}</th>
+            <th>Action</th>
+          </tr>
+          <tr>
+            <th *ngFor="let col of cols">
+              <p-columnFilter
+                type="text"
+                [field]="col.field"
+                [matchModeOptions]="matchModeOptions"
+                [matchMode]="customFilterName" />
+            </th>
+            <th></th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-user>
+          <tr>
+            <td>{{ user.nom }}</td>
+            <td>{{ user.prenom }}</td>
+            <td>
+              <button type="button" class="icon-btn" (click)="deleteUser(user)" aria-label="Supprimer l'utilisateur">
+                <i class="pi pi-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="3">Aucun utilisateur à afficher.</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</section>
