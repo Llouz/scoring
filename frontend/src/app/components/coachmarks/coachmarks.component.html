@@ -3,9 +3,12 @@
     <h1>Scores</h1>
   </div>
 
-  <div class="panel">
+  <div class="panel" [class.edit-mode]="isEditMode">
     <div class="panel-heading">
-      <h2>Créer / mettre à jour un score</h2>
+      <h2>{{ isEditMode ? 'Modifier le score' : 'Créer / mettre à jour un score' }}</h2>
+      <button *ngIf="isEditMode" type="button" class="cancel-edit-btn" (click)="cancelEdit()">
+        ✕ Annuler
+      </button>
     </div>
 
     <div class="form-grid">
@@ -15,6 +18,7 @@
           [(ngModel)]="associate.user.nom"
           (ngModelChange)="updateUserSuggestionList('associate')"
           placeholder="Nom"
+          [readonly]="isEditMode"
         />
 
         <div *ngIf="associateUserSuggestions.length" class="suggestion-list">
@@ -34,6 +38,7 @@
           [(ngModel)]="associate.user.prenom"
           (ngModelChange)="updateUserSuggestionList('associate')"
           placeholder="Prénom"
+          [readonly]="isEditMode"
         />
       </div>
 
@@ -43,6 +48,7 @@
           [(ngModel)]="associate.guide.nom"
           (ngModelChange)="updateGuideSuggestionList('associate')"
           placeholder="Guide"
+          [readonly]="isEditMode"
         />
 
         <div *ngIf="associateGuideSuggestions.length" class="suggestion-list">
@@ -57,7 +63,7 @@
       </div>
 
       <div class="field">
-        <label>Score initial</label>
+        <label>Score {{ isEditMode ? '' : 'initial' }}</label>
         <input
           type="number"
           [(ngModel)]="associate.score"
@@ -65,11 +71,15 @@
       </div>
 
       <div class="field actions">
-
         <button
           type="button"
+          [class.btn-edit]="isEditMode"
           (click)="associateUser()">
-          Enregistrer
+          <svg *ngIf="isEditMode" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+               fill="currentColor" viewBox="0 0 24 24" style="margin-right:6px;vertical-align:middle">
+            <path d="M3 17.25V21h3.75l11.06-11.06-3.75-3.75L3 17.25zm17.71-10.21a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          </svg>
+          {{ isEditMode ? 'Modifier' : 'Enregistrer' }}
         </button>
       </div>
     </div>
@@ -85,7 +95,7 @@
         <label>Nom utilisateur</label>
         <input
           [(ngModel)]="searchNom"
-          (ngModelChange)="updateUserSuggestionList('search')"
+          (ngModelChange)="onSearchUserInput()"
           placeholder="Nom"
         />
 
@@ -104,12 +114,21 @@
         <label>Prénom</label>
         <input
           [(ngModel)]="searchPrenom"
-          (ngModelChange)="updateUserSuggestionList('search')"
+          (ngModelChange)="onSearchUserInput()"
           placeholder="Prénom"
         />
       </div>
 
-      <div class="field actions">    
+      <div class="field">
+        <label>Nom guide</label>
+        <input
+          [(ngModel)]="searchGuideNom"
+          (ngModelChange)="onSearchGuideInput()"
+          placeholder="Nom du guide"
+        />
+      </div>
+
+      <div class="field actions">
         <button
           type="button"
           class="secondary"
@@ -126,18 +145,15 @@
 
   <div class="list-header">
     <h2>Liste des scores</h2>
-
     <button
       type="button"
       class="toggle-btn"
       (click)="showScores = !showScores">
-
       {{ showScores ? 'Masquer la liste' : 'Afficher la liste' }}
     </button>
   </div>
 
   <div class="table-wrapper" *ngIf="showScores">
-
     <table *ngIf="userScores.length">
       <thead>
         <tr>
@@ -145,15 +161,23 @@
           <th>Prénom</th>
           <th>Guide</th>
           <th>Score</th>
+          <th>Action</th>
         </tr>
       </thead>
-
       <tbody>
         <tr *ngFor="let score of userScores" class="table-row">
           <td>{{ score.user.nom }}</td>
           <td>{{ score.user.prenom }}</td>
           <td>{{ score.guide.nom }}</td>
           <td>{{ score.score }}</td>
+          <td>
+            <button type="button" class="icon-btn edit-icon-btn" (click)="editScore(score)" title="Modifier">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                   fill="currentColor" viewBox="0 0 24 24">
+                <path d="M3 17.25V21h3.75l11.06-11.06-3.75-3.75L3 17.25zm17.71-10.21a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+              </svg>
+            </button>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -161,6 +185,5 @@
     <p *ngIf="!userScores.length">
       Aucun score affiché.
     </p>
-
   </div>
 </section>

@@ -30,7 +30,6 @@ public class CoachmarkServiceImpl implements CoachmarkService {
         UserDto userDto = coachmarkDto.getUser();
         GuideDto guideDto = coachmarkDto.getGuide();
 
-        // 1. Récupération de l'utilisateur et du guide
         User user = userRepository.findByNomAndPrenom(userDto.getNom(), userDto.getPrenom())
                 .orElseThrow(() -> new RuntimeException(
                         String.format("Utilisateur introuvable : %s %s", userDto.getNom(), userDto.getPrenom())
@@ -39,17 +38,14 @@ public class CoachmarkServiceImpl implements CoachmarkService {
         Guide guide = guideRepository.findByNom(guideDto.getNom())
                 .orElseThrow(() -> new RuntimeException("Guide introuvable avec le nom : " + guideDto.getNom()));
 
-        // 2. Recherche de la relation existante ou création d'une nouvelle
         CoachmarkState state = coachmarkStateRepository.findByUserUuidAndGuideUuid(user.getUuid(), guide.getUuid())
                 .map(existingState -> {
-                    // Si elle existe, on met à jour le score (seulement si un score est passé dans le DTO)
                     if (coachmarkDto.getScore() != null) {
                         existingState.setScore(coachmarkDto.getScore());
                     }
                     return existingState;
                 })
                 .orElseGet(() -> {
-                    // Si elle n'existe pas, on crée une nouvelle instance
                     CoachmarkState newState = new CoachmarkState();
                     newState.setUser(user);
                     newState.setGuide(guide);
@@ -58,7 +54,6 @@ public class CoachmarkServiceImpl implements CoachmarkService {
                     return newState;
                 });
 
-        // 3. Sauvegarde
         CoachmarkState savedState = coachmarkStateRepository.save(state);
 
         return convertToDto(savedState);
@@ -82,15 +77,11 @@ public class CoachmarkServiceImpl implements CoachmarkService {
 
     @Override
     public List<CoachmarkDto> getGuideUsers(GuideDto guideDto) {
-        // 1. Récupération du guide par son nom pour valider son existence
         Guide guide = guideRepository.findByNom(guideDto.getNom())
                 .orElseThrow(() -> new RuntimeException("Guide introuvable avec le nom : " + guideDto.getNom()));
 
-        // 2. Récupération de toutes les relations associées à ce guide
-        // (Adapte le nom de la méthode du repository selon ce que tu as défini, ex: findByGuide)
         List<CoachmarkState> states = coachmarkStateRepository.findByGuideUuid(guide.getUuid());
 
-        // 3. Conversion de la liste d'entités en liste de DTOs
         return states.stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());

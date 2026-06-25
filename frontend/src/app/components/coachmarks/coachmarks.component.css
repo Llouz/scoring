@@ -258,3 +258,86 @@ width: 100%;
   background: #f3f4f6;
   transform: translateY(-1px);
 }
+/* =========================
+ICÔNE MODIFICATION (même style que suppression)
+========================= */
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  background: transparent;
+}
+
+.edit-icon-btn {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.edit-icon-btn:hover {
+  background: #dbeafe;
+  transform: translateY(-1px);
+}
+
+/* =========================
+MODE ÉDITION — panel mis en évidence
+========================= */
+
+.panel.edit-mode {
+  border: 2px solid #2563eb;
+  box-shadow:
+    0 0 0 4px rgba(37, 99, 235, 0.1),
+    0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cancel-edit-btn {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  height: auto;
+}
+
+.cancel-edit-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+/* Bouton Modifier (mode édition) */
+
+.btn-edit {
+  background: #2563eb !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-edit:hover {
+  background: #1d4ed8 !important;
+}
+
+/* Champ readonly en mode édition */
+
+.field input[readonly] {
+  background: #f8fafc;
+  color: #94a3b8;
+  cursor: not-allowed;
+  border-color: #e2e8f0;
+}

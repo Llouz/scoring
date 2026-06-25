@@ -20,4 +20,9 @@ export class CoachmarkService {
     const params = new HttpParams().set('nom', nom).set('prenom', prenom);
     return this.http.get<ApiResponse<Coachmark[]>>(`${this.baseUrl}/coachmarks/user`, { params });
   }
+
+  getGuideUsers(nom: string): Observable<ApiResponse<Coachmark[]>> {
+    const params = new HttpParams().set('nom', nom);
+    return this.http.get<ApiResponse<Coachmark[]>>(`${this.baseUrl}/coachmarks/guide`, { params });
+  }
 }

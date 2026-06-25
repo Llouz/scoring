@@ -23,7 +23,6 @@ public class Guide {
         this.nom = nom;
     }
 
-    // 1. Clé primaire officielle (UUID)
     @Id
     @GeneratedValue
     private UUID uuid;
@@ -39,7 +38,7 @@ public class Guide {
             unique = true,
             insertable = false,
             updatable = false,
-            columnDefinition = "serial" // 👈 PAREIL ICI
+            columnDefinition = "serial" 
     )
     @Generated(event = EventType.INSERT)
     private Long id;

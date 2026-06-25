@@ -32,8 +32,12 @@ export class CoachmarkComponent implements OnInit {
 
   searchNom = '';
   searchPrenom = '';
+  searchGuideNom = '';
   userScores: Coachmark[] = [];
   message = '';
+
+  // ← NOUVEAU : indique si on est en mode édition
+  isEditMode = false;
 
   associate: Coachmark = {
     user: { nom: '', prenom: '' },
@@ -165,8 +169,34 @@ export class CoachmarkComponent implements OnInit {
     }
   }
 
+  onSearchUserInput(): void {
+    if (this.searchGuideNom.trim()) {
+      this.searchGuideNom = '';
+    }
+    this.updateUserSuggestionList('search');
+  }
+
+  onSearchGuideInput(): void {
+    if (this.searchNom.trim() || this.searchPrenom.trim()) {
+      this.searchNom = '';
+      this.searchPrenom = '';
+    }
+  }
+
   findScores(): void {
     this.message = '';
+
+    if (this.searchGuideNom.trim()) {
+      this.coachmarkService.getGuideUsers(this.searchGuideNom).subscribe({
+        next: (response) => {
+          this.userScores = response.data || [];
+          this.message = this.userScores.length ? 'Scores récupérés.' : 'Aucun score trouvé pour ce guide.';
+        },
+        error: () => (this.message = 'Erreur lors de la récupération des scores.')
+      });
+      return;
+    }
+
     if (!this.searchNom.trim() || !this.searchPrenom.trim()) {
       this.message = 'Nom et prénom sont requis pour récupérer les scores.';
       return;
@@ -181,6 +211,30 @@ export class CoachmarkComponent implements OnInit {
     });
   }
 
+  // ← NOUVEAU : remplit le formulaire du haut et active le mode édition
+  editScore(score: Coachmark): void {
+    this.associate = {
+      user: { nom: score.user.nom, prenom: score.user.prenom },
+      guide: { nom: score.guide.nom },
+      score: score.score
+    };
+    this.isEditMode = true;
+    this.message = '';
+    // Scroll vers le formulaire
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ← NOUVEAU : annule le mode édition
+  cancelEdit(): void {
+    this.isEditMode = false;
+    this.associate = {
+      user: { nom: '', prenom: '' },
+      guide: { nom: '' },
+      score: 0
+    };
+    this.message = '';
+  }
+
   associateUser(): void {
     this.message = '';
     if (!this.associate.user.nom.trim() || !this.associate.user.prenom.trim() || !this.associate.guide.nom.trim()) {
@@ -190,11 +244,28 @@ export class CoachmarkComponent implements OnInit {
 
     this.coachmarkService.saveOrUpdate(this.associate).subscribe({
       next: () => {
-        alert('Création réussie !');
-        this.message = 'Association créée avec succès.';
-        this.associate.score = 0;
+        if (this.isEditMode) {
+          alert('Modification réussie !');
+          this.message = 'Score modifié avec succès.';
+          // Met à jour la ligne dans la liste sans refaire une requête
+          const idx = this.userScores.findIndex(
+            s => s.user.nom === this.associate.user.nom &&
+                 s.user.prenom === this.associate.user.prenom &&
+                 s.guide.nom === this.associate.guide.nom
+          );
+          if (idx !== -1) {
+            this.userScores[idx].score = this.associate.score;
+          }
+          this.isEditMode = false;
+        } else {
+          alert('Création réussie !');
+          this.message = 'Association créée avec succès.';
+        }
+        this.associate = { user: { nom: '', prenom: '' }, guide: { nom: '' }, score: 0 };
       },
-      error: () => (this.message = 'Erreur lors de l association utilisateur-guide.')
+      error: () => (this.message = this.isEditMode
+        ? 'Erreur lors de la modification du score.'
+        : 'Erreur lors de l\'association utilisateur-guide.')
     });
   }
 
